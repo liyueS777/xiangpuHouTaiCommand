@@ -59,12 +59,13 @@
           <el-input v-model="mUrlAgent" placeholder="请输入服务商地址"></el-input>
         </div>
       </li>
-      <li class="clearfix">
-        <div>版本号</div>
-        <div>
-          <el-input v-model="mUrlVersion" placeholder="请输入版本号"></el-input>
-        </div>
-      </li>
+      <!--翌能的不要版本号-->
+      <!--<li class="clearfix">-->
+        <!--<div>版本号</div>-->
+        <!--<div>-->
+          <!--<el-input v-model="mUrlVersion" placeholder="请输入版本号"></el-input>-->
+        <!--</div>-->
+      <!--</li>-->
       <li class="clearfix">
         <div>登录logo</div>
         <imgupload class="auth-img" @SendToImgUrl="receptImgMLogin" :imgUrlFileList="fileListMLogin" @EmptyImgUrl="emptyImgMLogin"></imgupload>
@@ -227,7 +228,7 @@
         that.mUrlOffical = result.homeUrl;
 
 
-        that.mUrlVersion = result.versionAbout==null?'':result.versionAbout;
+//        that.mUrlVersion = result.versionAbout==null?'':result.versionAbout;
         that.mUrlAgent = result.providerUrl==null?'':result.providerUrl;
         that.mUrlMall = result.mallUrl;
         //为了处理数据结构类型
@@ -270,6 +271,7 @@
       emptyImgMAbout(){
         this.ImgMAbout = '';
       },
+
       configConfirm(){
         const that = this;
         if(that.configEditItem&&that.configEditItem.id){
@@ -296,8 +298,9 @@
               indexLogoDir: that.ImgMMain,
               aboutLogoDir:that.ImgMAbout,
               compId: that.configEditItem.compId,
-              versionAbout:that.mUrlVersion.trim()
+//              versionAbout:that.mUrlVersion.trim()
             };
+//            console.log(paramsObj,5432);
 //            if(that.mUrlweilian&&that.mUrlweilian.trim()){
 //              paramsObj["weilianlUrl"] = that.mUrlweilian.trim();
 //            }
@@ -415,7 +418,7 @@
                 indexLogoDir: that.ImgMMain,
                 aboutLogoDir:that.ImgMAbout,
                 compId: that.compID.compId,
-                versionAbout:that.mUrlVersion.trim()
+//                versionAbout:that.mUrlVersion.trim()
               }, function (response) {
                 console.log(response.data);
                 that.$message({

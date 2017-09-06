@@ -363,16 +363,16 @@
                 });
                 return;
               }
-              // 复制信息时，环境要一致，PC 与iPad； IOS与Android
+              // 复制信息时，环境要一致，PC 与Pad； IOS与Android
 
               let envPrev = that.envMsg.value.slice(0,that.envMsg.value.length-1);
               let envCopy = that.CopyenvMsg.value.slice(0,that.CopyenvMsg.value.length-1);
               console.log(envPrev,envCopy,'copyyyyyyy');
-              if( ((envPrev == 'PC' || envPrev=='iPad') && (envCopy == 'iPad' || envCopy=='PC')) || ((envPrev == 'Android' || envPrev=='IOS') && (envCopy == 'IOS' || envCopy=='Android')) ) {
+              if( ((envPrev == 'PC' || envPrev=='Pad') && (envCopy == 'Pad' || envCopy=='PC')) || ((envPrev == 'Android' || envPrev=='IOS') && (envCopy == 'IOS' || envCopy=='Android')) ) {
 
               }else {
                 this.$message({
-                  message: '环境信息不匹配，只能是 PC 与 iPad或者PC；以及IOS与Android或者IOS',
+                  message: '环境信息不匹配，只能是 PC 与 Pad或者PC；以及IOS与Android或者IOS',
                   type: 'warning',
                   duration:that.$duration,
                 });
@@ -539,11 +539,7 @@
               console.log(key);
               if(key.indexOf('PC')>-1){
                 this.optionID = this.optionPc
-              }
-              else if(key.indexOf('iPad')>-1){
-                this.optionID = this.optioniPad;
-              }
-              else{
+              }else{
                 this.optionID = this.optionApp
               }
             },

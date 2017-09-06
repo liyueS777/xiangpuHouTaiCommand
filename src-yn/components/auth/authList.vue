@@ -1,5 +1,4 @@
 <template>
-
   <div class="company" v-loading.body="loading">
     <el-select v-model="compOption" placeholder="请选择集团" class="configSelect1" @change="selectCompName">
       <el-option
@@ -216,11 +215,6 @@
 //        this.listOff=false;
     },
     created(){
-//        let a =1;
-//        let b =1;
-//        let arr = [];
-//        const [1,2] = arr;
-//        console.log(arr)
       const that = this;
       that.listOff=true;
       that.loading = false;

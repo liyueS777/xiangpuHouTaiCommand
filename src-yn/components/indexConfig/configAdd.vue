@@ -236,6 +236,7 @@
         };
         that.optionscascader[0] = this.selectedOptionscascader;
         if(that.selectedOptionscascader.compId){
+            console.log('subcpm11111');
           that.$Ajax
             .post(that.Host+'/sevenStarController/getAllSubCompany',{
               compId:that.selectedOptionscascader.compId
@@ -290,11 +291,7 @@
           console.log(key);
         if(key.indexOf('PC')>-1){
           this.optionID = this.optionPc
-        }
-        else if(key.indexOf('iPad')>-1){
-          this.optionID = this.optioniPad
-        }
-        else {
+        }else{
           this.optionID = this.optionApp
         }
       },
@@ -363,13 +360,11 @@
         }
           else{
 
-            if( (that.envMsg.indexOf('PC') > -1 || that.envMsg.indexOf('iPad') > -1) && key<=3 ){
+            if(that.envMsg.indexOf('PC') > -1 && key<=3){
                 that.ifAjax = true;
-            }
-            else if( (that.envMsg.indexOf('PC') <= -1 || that.envMsg.indexOf('iPad') <= -1) &&　key==14 ){
+            }else if(that.envMsg.indexOf('PC') <= -1 &&　key==14){
               that.ifAjax = true;
-            }
-            else {
+            }else {
               that.ifAjax = false;
             }
             var params;

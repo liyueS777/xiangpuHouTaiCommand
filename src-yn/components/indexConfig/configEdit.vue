@@ -123,11 +123,12 @@
   import configheader from '../common/configHeader.vue'
   import imgupload from '../common/imgUpload.vue'
   export default {
-    components:{
+        components:{
           configheader,
           imgupload
         },
-    data(){
+        data()
+    {
         return {
 //          checkAll: true,
 //          userAuth: [],
@@ -166,10 +167,13 @@
           CurrentEditActiveObj:{},
           CurrentEditPosIDObj:{}
         }
-      },
-    created(){
+    }
+    ,
+    created()
+    {
       this.init(this.configEditItem);
-    },
+    }
+    ,
     watch:{
        configEditItem:{
          handler(newItem,oldItem) {
@@ -183,13 +187,7 @@
                this.$nextTick(()=>{
                  this.optionID = this.optionPc;
                })
-             }
-             else if(newEnv.value.indexOf('iPad')>-1){
-               this.$nextTick(()=>{
-                 this.optionID = this.optioniPad;
-               })
-             }
-             else{
+             }else{
                this.$nextTick(()=>{
                  this.optionID = this.optionApp;
                })
@@ -209,7 +207,8 @@
             }
           }
         }
-    },
+    }
+    ,
     methods: {
 //      handleCheckAllChange(event) {
 //        this.userAuth = event.target.checked ? this.cities : [];
@@ -254,11 +253,7 @@
         this.params = this.EditQuery.otherParam;
         if(this.EditQuery.appEnvName.indexOf('PC')>-1){
           this.optionID = this.optionPc
-        }
-        else if(this.EditQuery.appEnvName.indexOf('iPad')>-1){
-          this.optionID = this.optioniPad;
-        }
-        else {
+        }else {
           this.optionID = this.optionApp
         }
         //找出与选中结果一样的选项；
@@ -338,10 +333,7 @@
         if(that.EditQuery.subCompCode){
           paramsObj["subCompName"] = that.EditQuery.subCompName
         }
-        if( ( (that.EditQuery.appEnvName.indexOf('PC') > -1 || that.EditQuery.appEnvName.indexOf('iPad') > -1) && that.EditQuery.btnPosId<=3)
-              ||
-            ( (that.EditQuery.appEnvName.indexOf('IOS') > -1 || that.EditQuery.appEnvName.indexOf('Android') > -1) &&　that.EditQuery.btnPosId==14)
-        ){
+        if((that.EditQuery.appEnvName.indexOf('PC') > -1 && that.EditQuery.btnPosId<=3) || (that.EditQuery.appEnvName.indexOf('PC') <= -1 &&　that.EditQuery.btnPosId==14)){
             if(that.ajaxUrl==null){
               that.ajaxUrl = '';
             }
@@ -362,6 +354,8 @@
                 }
               }
             });
+
+
           })
           .catch(function (error) {
             console.log(error);
