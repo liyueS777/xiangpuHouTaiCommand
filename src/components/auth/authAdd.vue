@@ -3,16 +3,29 @@
     <configheader :title="titleConfig"></configheader>
     <ul class="configAdd">
       <li class="clearfix">
-        <div>企业名称</div>
-        <div>
-          <el-select v-model="compID" placeholder="请选择企业" :disabled='ifEdit'>
+        <div>{{!ifEdit?'企业名称':'企业编码'}}</div>
+        <div v-if="!ifEdit">
+          <el-select v-model="compID" placeholder="请选择企业" :disabled='ifEdit' @change="selectChildrenCompany">
             <el-option
               v-for="item in compOption"
               :key="item.compId"
               :label="item.compName"
-              :value="item">
+              :value="item.compId">
             </el-option>
           </el-select>
+        </div>
+        <div v-if="!ifEdit">
+          <el-select v-model="ChildRenCompany" placeholder="请选择子公司信息" :clearable="!ifEdit" :disabled='ifEdit'>
+            <el-option
+              v-for="item in ChildRenCompanyItem"
+              :key="item.compId"
+              :label="item.compName"
+              :value="item.compId">
+            </el-option>
+          </el-select>
+        </div>
+        <div v-if="ifEdit">
+          <el-input v-model="Everycode" placeholder="请输入公司编码" disabled></el-input>
         </div>
       </li>
       <li class="clearfix">
@@ -135,11 +148,14 @@
     data()
     {
       return {
+        Everycode:'',
         mUrlAgent:'',
         mUrlweilian:'',
         mUrlVersion:"",
         version:'',
-        compID:{},
+        compID:'',
+        ChildRenCompany:'',
+        ChildRenCompanyItem:[],
         compOption:[],
         input:'',
         envMsg: {},
@@ -188,22 +204,44 @@
     }
     ,
     methods: {
+      selectChildrenCompany(key){
+          console.log(key,'addd');
+//        this.ChildRenCompanyItem = [];
+        this.ChildRenCompany = '';
+          ///sevenStarController/getAllSubCompany
+        this.confirm(this.Host+'/sevenStarController/getAllSubCompany',{
+          compId:key
+        },(res)=>{
+            console.log(res.data);
+            this.ChildRenCompanyItem = res.data.data;
+            console.log(this.ChildRenCompany,this.ChildRenCompanyItem,123)
+        })
+      },
       hasAuth(callBack){
           const that = this;
           if(that.$store.getters.user.grade==1){
-            this.compID = {
+//            this.compID = {
+//              compCode:that.$store.getters.user.company.comp_code,
+//              compId:that.$store.getters.user.company.id,
+//              compName:that.$store.getters.user.company.comp_name
+//            };
+            //这里先不给赋值是因为要选择，那么只给他一个选项就可以了；
+//            this.compID = that.$store.getters.user.company.id;
+            that.compOption[0] = {
               compCode:that.$store.getters.user.company.comp_code,
               compId:that.$store.getters.user.company.id,
               compName:that.$store.getters.user.company.comp_name
             };
-            that.compOption[0] = this.compID;
             callBack && callBack();
           }else if(that.$store.getters.user.grade==0){
             that.$Ajax
               .post(that.Host+'/sevenStarController/getAllCompany',{})
               .then(function (res) {
-                console.log(res.data);
-                that.compOption = res.data.data;
+                console.log(res.data,'000000');
+                that.$nextTick(()=>{
+                  that.compOption = res.data.data;
+                })
+                console.log(that.compOption,that.compID,'init');
                 callBack && callBack();
               })
               .catch(function (error) {
@@ -214,10 +252,12 @@
       chengeee(key){console.log(key);},
       init(item){
         const that = this;
+        console.log(item,'edit');
         let result = item;
-        that.compID = that.compOption.find(function (value,index,arr) {
-          return value.compCode == result.orgName;
-        });
+        that.Everycode = item.orgName;
+//        that.compID = that.compOption.find(function (value,index,arr) {
+//          return value.compCode == result.orgName;
+//        });
         that.version = result.version;
         that.envMsg = that.options.find(function (value,index,arr) {
           return value.value == result.env;
@@ -284,7 +324,7 @@
             };
             let paramsObj = {
               id:that.configEditItem.id,
-              orgName: that.compID.compCode,
+              orgName: that.configEditItem.orgName,
               version: that.version,
               env: that.envMsg.value,
               homeUrl: that.mUrlOffical.trim(),
@@ -303,12 +343,14 @@
 //            }
           that.confirm(that.Host + '/authController/updateAuthentication',paramsObj, function (response) {
               if (response.data.code == 1) {
-                  Connect.compCode = that.compID.compCode;
+//                  Connect.compCode = that.compID.compCode;
+//                  Connect.compCode = that.configEditItem.orgName;
                 that.$emit('configEditSuccess',{code:1});
               }
           })
-        }else {
-          if(!that.compID.compCode){
+        }
+        else {
+          if(!that.compID){
             this.$message({
               message: '请先选择企业信息',
               type: 'warning',
@@ -388,11 +430,19 @@
             });
             return;
           }
-          that.confirm(that.Host + '/authController/getAuthenIsExist',{
-            orgName:that.compID.compCode,
+          //子公司
+          let childCmsg = that.ChildRenCompany && that.ChildRenCompanyItem.find((value)=>{
+              return that.ChildRenCompany==value.compId
+          });
+          let parentMsg = that.compOption.find((value)=>{
+            return that.compID==value.compId
+          });
+          let paramsID = {
+            orgName:that.ChildRenCompany?childCmsg.compCode:parentMsg.compCode,
             version:that.version,
             env:that.envMsg.value
-          },(res)=>{
+          };
+          that.confirm(that.Host + '/authController/getAuthenIsExist',paramsID,(res)=>{
             console.log(res.data,'查询鉴权环境');
             if(res.data.code ==0){
               that.$message({
@@ -402,21 +452,33 @@
                 showClose: true,
               });
             }else {
-              that.confirm(that.Host + '/authController/addAuthentication', {
-                orgName: that.compID.compCode,
-                version: that.version,
-                env: that.envMsg.value,
-                homeUrl: that.mUrlOffical.trim(),
-                mallUrl: that.mUrlMall.trim(),
-                weilianlUrl: that.mUrlweilian.trim(),
-                providerUrl: that.mUrlAgent.trim(),
-                loginLogoDir: that.ImgMLogin,
-                authLogoDir: that.ImgMAuth,
-                indexLogoDir: that.ImgMMain,
-                aboutLogoDir:that.ImgMAbout,
-                compId: that.compID.compId,
-                versionAbout:that.mUrlVersion.trim()
-              }, function (response) {
+                let orgName ='';
+                let compId ='';
+                if(that.ChildRenCompany){
+                  orgName = childCmsg.compCode;
+                  compId = that.ChildRenCompany;
+                }else {
+                  orgName = parentMsg.compCode;
+                  compId = that.compID;
+                }
+                let params = {
+                  orgName: orgName,
+                  compId: compId,
+                  version: that.version,
+                  env: that.envMsg.value,
+                  homeUrl: that.mUrlOffical.trim(),
+                  mallUrl: that.mUrlMall.trim(),
+                  weilianlUrl: that.mUrlweilian.trim(),
+                  providerUrl: that.mUrlAgent.trim(),
+                  loginLogoDir: that.ImgMLogin,
+                  authLogoDir: that.ImgMAuth,
+                  indexLogoDir: that.ImgMMain,
+                  aboutLogoDir:that.ImgMAbout,
+                  versionAbout:that.mUrlVersion.trim()
+                };
+              that.confirm(that.Host + '/authController/addAuthentication',
+                params,
+                function (response) {
                 console.log(response.data);
                 that.$message({
                   message: response.data.msg,

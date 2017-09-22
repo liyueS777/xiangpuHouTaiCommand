@@ -22,7 +22,6 @@
 // import authAdd from '../components/auth/authAdd.vue'
 // import authList from '../components/auth/authList.vue'
 // import dirty from '../components/common/404.vue'
-
 export default [
   {
     path: '/',
@@ -105,13 +104,6 @@ export default [
           require(['../components/indexConfig/copy.vue'], resolve)
         }
       },
-      {
-        path: '/r',
-        // name: 'sevenStarList',
-        component: function (resolve) {
-          require(['../components/common/replace1.vue'], resolve)
-        }
-      }
     ]
   },
   {

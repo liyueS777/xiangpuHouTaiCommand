@@ -1,15 +1,19 @@
 <template>
     <div class="home">
-      <headervue></headervue>
-      <navbar></navbar>
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item>{{breadcrumb1}}</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: breadcrumbRoute2 }">{{breadcrumb2}}</el-breadcrumb-item>
-      </el-breadcrumb>
-      <div class="content">
-        <transition :name="transitionName">
-          <router-view class="homeChildView"></router-view>
-        </transition>
+      <headervue class="h-header"></headervue>
+      <div class="medium">
+        <navbar class="medium-left"></navbar>
+        <div class="medium-right">
+          <el-breadcrumb class="m-bread" separator="/">
+            <el-breadcrumb-item>{{breadcrumb1}}</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: breadcrumbRoute2 }">{{breadcrumb2}}</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="content">
+            <transition :name="transitionName">
+              <router-view class="homeChildView"></router-view>
+            </transition>
+          </div>
+        </div>
       </div>
       <div class="h-footer">版权所有©象翌微链科技发展有限公司 桂ICP备1300904号</div>
     </div>
@@ -140,11 +144,12 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "../../style/base.css";
   body,html {
     height: 100%;
-    min-width:1200px;
+    /*min-width:1200px;*/
+    width: 100%;
   }
   .home {
     font-family: 'Aveznir', Helvetica, Arial, sans-serif;
@@ -154,7 +159,7 @@
     color: #2c3e50;
     position: relative;
     height:100%;
-    > div:nth-of-type(1){
+    > .h-header {
       position: fixed;
       top: 0;
       left: 0;
@@ -162,44 +167,67 @@
       background-color: rgb(31, 81, 134);
       z-index:99;
     }
-    > div:nth-of-type(2){
-      width: 200px;
-      position: fixed;
-      left: 0;
-      top: 70px;
+    > .medium {
+      width: 100%;
       height: 100%;
-      z-index:11;
-    }
-    > .el-breadcrumb {
-      /*line-height: 24px;*/
-      font-size: 16px;
-      padding-left: 250px;
-      padding-top: 90px;
-    }
-    > .content {
-      margin-left: 220px;
-      padding-top: 10px;
-      padding-right: 10px;
-        .homeChildView {
-          transition: all .5s cubic-bezier(.55,0,.1,1);
-          margin-bottom: 50px;
+      padding-top: 70px;
+      box-sizing: border-box;
+      padding-bottom: 40px;
+      > .medium-left {
+        float: left;
+        height: 100%;
+      }
+      > .medium-right {
+        /*float: left;*/
+        overflow: hidden;
+        height: 100%;
+        box-sizing: border-box;
+        padding-left: 10px;
+        .m-bread {
+          /*line-height: 24px;*/
+          /*overflow: hidden;*/
+          font-size: 16px;
+          box-sizing: border-box;
+          padding-left: 60px;
+          padding-top: 10px;
+          line-height: 30px;
         }
-        .slide-left-enter, .slide-right-leave-active {
-          opacity: 0;
-          -webkit-transform: translate(30px, 0);
-          transform: translate(30px, 0);
+        > .content {
+          /*padding-top: 10px;*/
+          padding-right: 10px;
+          box-sizing: border-box;
+          padding-top: 10px;
+          padding-bottom: 40px;
+          height: 100%;
+          overflow: auto;
+          /*width: 100%;*/
+          .homeChildView {
+            transition: all .5s cubic-bezier(.55,0,.1,1);
+            margin-bottom: 50px;
+            /*position: absolute;*/
+            /*left: 0;*/
+            /*top: 0;*/
+            /*height: 100%;*/
+          }
+          .slide-left-enter, .slide-right-leave-active {
+            opacity: 0;
+            -webkit-transform: translate(30px, 0);
+            transform: translate(30px, 0);
+          }
+          .slide-left-leave-active, .slide-right-enter {
+            opacity: 0;
+            -webkit-transform: translate(-30px, 0);
+            transform: translate(-30px, 0);
+          }
         }
-        .slide-left-leave-active, .slide-right-enter {
-          opacity: 0;
-          -webkit-transform: translate(-30px, 0);
-          transform: translate(-30px, 0);
-        }
+      }
+
     }
+
     .h-footer {
       position: fixed;
       bottom: 0;
       left: 0;
-      padding-left: 200px;
       box-sizing: border-box;
       width: 100%;
       height: 40px;
@@ -208,6 +236,7 @@
       font-size: 16px;
       z-index:10;
       background-color: #eae5e5;
+      text-align: center;
     }
   }
 </style>

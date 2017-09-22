@@ -3,9 +3,9 @@
     <el-select v-model="compOption" placeholder="请选择企业" class="configSelect1" @change="selectCompName">
       <el-option
         v-for="(item,index) in optionComp"
-        :key="index.compId"
+        :key="item.compId"
         :label="item.compName"
-        :value="item">
+        :value="item.compId">
       </el-option>
     </el-select>
 
@@ -14,14 +14,14 @@
         v-for="item in ChildRenCompanyItem"
         :key="item.compId"
         :label="item.compName"
-        :value="item">
+        :value="item.compCode">
       </el-option>
     </el-select>
 
     <el-select v-model="version" placeholder="请选择版本" class="configSelect1" @change='selectEnv'>
       <el-option
         v-for="(item,index) in optionVersion"
-        :key="item.index"
+        :key="index"
         :label="item.index"
         :value="item">
       </el-option>
@@ -54,10 +54,12 @@
     <el-table
       :data="congigListItem"
       border
+      max-height="490"
       :empty-text="' '"
       style="width: 100%">
       <el-table-column
         label="企业编码"
+        fixed
         width="130">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
@@ -199,7 +201,7 @@
       <!--</el-table-column>-->
 
 
-      <el-table-column label="操作">
+      <el-table-column label="操作" fixed="right" min-width="140">
         <template scope="scope">
           <el-button
             size="small"
@@ -239,7 +241,7 @@
     data() {
       return {
         version:'',
-        compOption:{},
+        compOption:'',
         pageShow:false,
         currentPage: 1,
         pageSize:10,
@@ -262,7 +264,7 @@
         dialogTableVisible:false,
         itemNew:{},
         itemtitle:'',
-        ChildRenCompany:{},
+        ChildRenCompany:'',
         ChildRenCompanyItem:[],
       };
     },
@@ -287,28 +289,29 @@
           if(that.$store.getters.user.grade==0){
 
             that.optionComp = resComp.data.data;
-            if(ConnectState.compOption&&ConnectState.compOption.compCode){
-                console.log('jin集团公司');
-              that.compOption = that.optionComp.find((value)=>{
-                return value.compCode == ConnectState.compOption.compCode;
-              });
-            }
+//            if(ConnectState.compOption){
+//                console.log('jin集团公司');
+//              that.compOption = that.optionComp.find((value)=>{
+//                return value.compCode == ConnectState.compOption.compCode;
+//              });
+//            }
           }
           that.optionVersion = resVersion.data.data;
-          if(that.version&&that.ifActive&&that.compOption.compId&&that.envMsg){
+          if(that.version&&that.ifActive&&that.compOption&&that.envMsg){
             console.log(that.compOption,'进入select');
             that.selectCompName(that.compOption,()=>{
-              if(ConnectState.Subcomp.compCode){
+              if(ConnectState.Subcomp){
                 that.ChildRenCompany = ConnectState.Subcomp;
                 that.$Ajax
                   .post(that.Host + '/sevenStarController/getAllSubCompany', {
-                    compId: that.compOption.compId
+                    compId: that.compOption
                   })
                   .then((response) => {
                     that.ChildRenCompanyItem = response.data.data;
-                    that.ChildRenCompany = that.ChildRenCompanyItem.find((value)=>{
-                        return value.compCode == ConnectState.Subcomp.compCode;
-                    });
+                    that.ChildRenCompany = ConnectState.Subcomp;
+//                    that.ChildRenCompany = that.ChildRenCompanyItem.find((value)=>{
+//                        return value.compCode == ConnectState.Subcomp.compCode;
+//                    });
                   })
                   .catch(function (error) {
                     console.log(error);
@@ -344,7 +347,7 @@
       msgCheck(page,pageIndex){
         const that = this;
         that.currentPage = pageIndex;
-        if(!this.compOption.compId){
+        if(!this.compOption){
           this.$message({
             message: '请先选择企业信息',
             type: 'warning',
@@ -387,21 +390,21 @@
         ConnectState.Subcomp = that.ChildRenCompany;
         ConnectState.ifActive = that.ifActive;
         let indexparamsObj = {};
-        if(that.ChildRenCompany.compCode){
+        if(that.ChildRenCompany){
           indexparamsObj = {
             appVersion:that.version,
             appEnvName: that.envMsg,
-            compId:that.compOption.compId,
+            compId:that.compOption,
             isActived:that.ifActive,
             pageIndex:pageIndex,
             pageSize:page,
-            subCompCode:that.ChildRenCompany.compCode
+            subCompCode:that.ChildRenCompany
           }
         }else {
           indexparamsObj = {
             appVersion:that.version,
             appEnvName: that.envMsg,
-            compId:that.compOption.compId,
+            compId:that.compOption,
             isActived:that.ifActive,
             pageIndex:pageIndex,
             pageSize:page,
@@ -435,7 +438,7 @@
                     return value.value ==that.envMsg;
                   });
                   that.listCurrentCompObj = that.optionComp.find(function (value,index,arr) {
-                    return value.compId ==that.compOption.compId;
+                    return value.compId ==that.compOption;
                   });
                 }else{
                   that.congigListItem = [];
@@ -508,12 +511,17 @@
       getComp(){
         const that = this;
         if(that.$store.getters.user.grade==1){
-          this.compOption = {
+          this.compOption = that.$store.getters.user.company.id;
+//          this.compOption = {
+//            compCode:that.$store.getters.user.company.comp_code,
+//            compId:that.$store.getters.user.company.id,
+//            compName:that.$store.getters.user.company.comp_name
+//          };
+          that.optionComp[0] = {
             compCode:that.$store.getters.user.company.comp_code,
             compId:that.$store.getters.user.company.id,
             compName:that.$store.getters.user.company.comp_name
-          };
-          that.optionComp[0] = that.compOption;
+          };;
           that.selectCompName(that.compOption);
           return false;
         }else if(that.$store.getters.user.grade==0){
@@ -529,7 +537,7 @@
 //          that.$nextTick(()=> {
             that.$Ajax
               .post(that.Host + '/sevenStarController/getAllSubCompany', {
-                compId: key.compId
+                compId: key
               })
               .then((response) => {
                 if (response.data.code == 1 && response.data.data.length != 0) {
@@ -539,7 +547,7 @@
                 that.ChildRenCompanyItem = response.data.data;
                 console.log(that.ChildRenCompanyItem,that.ChildRenCompany,7878);
 
-                that.ChildRenCompany = {};
+                that.ChildRenCompany = '';
               })
               .catch(function (error) {
                 console.log(error);

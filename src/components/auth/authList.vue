@@ -6,7 +6,15 @@
         v-for="item in optionComp"
         :key="item.compId"
         :label="item.compName"
-        :value="item">
+        :value="item.compCode">
+      </el-option>
+    </el-select>
+    <el-select v-model="ChildRenCompany" placeholder="请选择子公司信息" clearable>
+      <el-option
+        v-for="item in ChildRenCompanyItem"
+        :key="item.compId"
+        :label="item.compName"
+        :value="item.compCode">
       </el-option>
     </el-select>
     <div class="block configCheck">
@@ -17,11 +25,13 @@
     <el-table
       :data="sevenStarListItem"
       border
+      max-height="530"
       :empty-text="' '"
       style="width: 100%">
       <el-table-column
         label="集团编码"
-        width="100">
+        fixed
+        width="140">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ scope.row.orgName }}</p>
@@ -38,7 +48,7 @@
         sortable
         prop="version"
         :sort-method="changeSortVersion"
-        width="100">
+        width="120">
         <template scope="scope">
           <!--<el-popover trigger="hover" placement="top">-->
           <!--<div slot="reference" class="name-wrapper">-->
@@ -63,7 +73,7 @@
       </el-table-column>
       <el-table-column
         label="官网Url"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ scope.row.homeUrl }}</p>
@@ -75,7 +85,7 @@
       </el-table-column>
       <el-table-column
         label="商城Url"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ scope.row.mallUrl }}</p>
@@ -87,7 +97,7 @@
       </el-table-column>
       <el-table-column
         label="微链Url"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ scope.row.weilianlUrl }}</p>
@@ -99,7 +109,7 @@
       </el-table-column>
       <el-table-column
         label="服务商Url"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ scope.row.providerUrl }}</p>
@@ -111,7 +121,7 @@
       </el-table-column>
       <el-table-column
         label="登录Url"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ imgUrlPre+scope.row.loginLogoDir }}</p>
@@ -123,7 +133,7 @@
       </el-table-column>
       <el-table-column
         label="鉴权Url"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ imgUrlPre+scope.row.authLogoDir }}</p>
@@ -135,7 +145,7 @@
       </el-table-column>
       <el-table-column
         label="首页logo"
-        width="100">
+        width="110">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ imgUrlPre+scope.row.indexLogoDir }}</p>
@@ -159,7 +169,7 @@
       </el-table-column>
       <el-table-column
         label="版本号"
-        width="90">
+        width="80">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>{{ scope.row.versionAbout }}</p>
@@ -169,7 +179,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="操作" class="btn">
+      <el-table-column label="操作" class="btn" fixed="right" width="140">
         <template scope="scope" class="div">
           <el-button
             size="small"
@@ -196,8 +206,10 @@
   export default {
     data() {
       return {
+        ChildRenCompany:'',
+        ChildRenCompanyItem:[],
         showclose:true,
-        compOption:{},
+        compOption:'',
         pageShow:false,
         currentPage: 1,
         pageSize:6,
@@ -224,14 +236,18 @@
       const that = this;
       that.listOff=true;
       that.loading = false;
-      that.hasAuth(()=>{
+      that.hasAuth(
+          ()=>{
         if(ConnectState.compCode){
-          that.compOption = that.optionComp.find((value,index,arr)=>{
-            return value.compCode == ConnectState.compCode;
-          });
+          console.log('authhhh');
+          that.compOption = ConnectState.compCode;
+//          that.compOption = that.optionComp.find((value,index,arr)=>{
+//            return value.compCode == ConnectState.compCode;
+//          });
           that.init();
         }
-      });
+      }
+      );
     },
     methods: {
       changeSortVersion(a,b){
@@ -244,18 +260,27 @@
       hasAuth(callBack){
           const that = this;
           if(that.$store.getters.user.grade==1){
-            this.compOption = {
-              compCode:that.$store.getters.user.company.comp_code,
-              compId:that.$store.getters.user.company.id,
-              compName:that.$store.getters.user.company.comp_name
-            };
-            that.optionComp[0] = this.compOption;
+            that.$nextTick(()=>{
+              this.compOption = that.$store.getters.user.company.comp_code;
+//              this.compOption = {
+//                compCode:that.$store.getters.user.company.comp_code,
+//                compId:that.$store.getters.user.company.id,
+//                compName:that.$store.getters.user.company.comp_name
+//              };
+              that.optionComp[0] = {
+                compCode:that.$store.getters.user.company.comp_code,
+                compId:that.$store.getters.user.company.id,
+                compName:that.$store.getters.user.company.comp_name
+              };
+            })
           }else if(that.$store.getters.user.grade==0){
             that.$Ajax
               .post(that.Host+'/sevenStarController/getAllCompany',{})
               .then(function (res) {
-                console.log(res.data);
-                that.optionComp = res.data.data;
+                console.log(res.data,777);
+                that.$nextTick(()=>{
+                  that.optionComp = res.data.data;
+                })
                 callBack && callBack();
               })
               .catch(function (error) {
@@ -275,7 +300,7 @@
       init(){
         this.$Ajax
           .post(this.Host+'/authController/getAuthenticationByOrgName',{
-            orgName:this.compOption.compCode
+            orgName:this.ChildRenCompany?this.ChildRenCompany:this.compOption
           })
           .then((response) => {
             if(response.data.code==0){
@@ -283,13 +308,15 @@
                 this.sevenStarListItem = [];
                 return;
             }
-            ConnectState.compCode = this.compOption.compCode;
-            this.editSelectMsg = this.compOption.compCode;
+            ConnectState.compCode = this.compOption;
+            this.editSelectMsg = this.compOption;
             console.log(response.data,'查询列表');
 
             this.sevenStarListItem = response.data.data;
             for(let i = 0;i<this.sevenStarListItem.length;i++){
-              this.sevenStarListItem[i].compId = this.compOption.compId;
+              this.sevenStarListItem[i].compId = this.optionComp.find((value)=>{
+                 return  this.compOption==value.compCode
+              }).compId;
               this.sevenStarListItem[i]["weilianlUrl"] = this.sevenStarListItem[i]["weilianlUrl"]==null?'':this.sevenStarListItem[i]["weilianlUrl"];
 
             }
@@ -353,7 +380,32 @@
       },
       selectCompName(key){
         console.log(key);
-      }
+        this.ChildRenCompany = '';
+        this.ChildRenCompanyItem = [];
+        ///sevenStarController/getAllSubCompany
+        let parentmsg = this.optionComp.find((value)=>{
+            return key==value.compCode
+        })
+        this.confirm(this.Host+'/sevenStarController/getAllSubCompany',{
+          compId:parentmsg.compId
+        },(res)=>{
+          console.log(res.data);
+          this.$nextTick(()=>{
+            this.ChildRenCompanyItem = res.data.data;
+          })
+        })
+      },
+      confirm(url,paramsObj,successCallBack){
+        const that = this;
+        that.$Ajax
+          .post(url,paramsObj,successCallBack)
+          .then(function (response) {
+            successCallBack && successCallBack(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
     },
     components:{
       configedit
@@ -363,9 +415,11 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .el-table__body-wrapper {
+  /*.el-table--enable-row-transition .el-table__body td*/
+  .el-table--enable-row-transition {
     .el-table__body {
-      .el-table__row {
+
+      tr {
         td {
           .cell {
             span {
@@ -381,19 +435,20 @@
             }
           }
         }
-        td:last-of-type {
+        .el-table_1_column_13 {
+
           .cell,div {
-            padding-left:0 !important;
-            padding-right: 0 !important;
+            /*padding-left:0 !important;*/
+            /*padding-right: 0 !important;*/
             width: 100%;
             button {
               padding:4px 6px !important;
             }
           }
         }
-      }
     }
 
+    }
 
     /*td:last-of-type {*/
       /*.el-table .cell:last-of-type {*/

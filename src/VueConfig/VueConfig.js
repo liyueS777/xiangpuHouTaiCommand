@@ -3,11 +3,10 @@ import Vue from 'vue'
 //访问后台地址
 // -------------------------------象谱--------------------------------
 //测试
-Vue.prototype.Host = 'http://172.19.6.104:8091/NVRCT';
-//本地
-// Vue.prototype.Host = 'http://172.19.5.228:8080/NVRCT';
+// Vue.prototype.Host = 'http://172.19.6.104:8091/NVRCT';
+
 //正式
-// Vue.prototype.Host = 'http://xp.weilian.cn:8199/NVRCT';
+Vue.prototype.Host = 'http://xp.weilian.cn:8199/NVRCT';
 
 
 // -------------------------------翌能--------------------------------
@@ -20,9 +19,9 @@ Vue.prototype.Host = 'http://172.19.6.104:8091/NVRCT';
 
 //登录-------------------------------------------------------------------
 //测试
-Vue.prototype.HostLogin = 'http://172.19.6.104:8086/UAMS';
+// Vue.prototype.HostLogin = 'http://172.19.6.104:8086/UAMS';
 //正式
-// Vue.prototype.HostLogin = 'http://openplatform.weilian.cn/UAMS';
+Vue.prototype.HostLogin = 'http://openplatform.weilian.cn/UAMS';
 
 
 Vue.prototype.$duration = 2000;
@@ -160,105 +159,177 @@ Vue.prototype.optioniPad = [
 ];
 //正式
 
-// Vue.prototype.envOption = [
-//                             {
-//                               value: 'IOS1',
-//                               label: 'IOS正式'
-//                             },
-//                             {
-//                               value: 'Android1',
-//                               label: 'Android正式'
-//                             },
-//                             {
-//                               value: 'PC1',
-//                               label: 'PC正式'
-//                             },
-//                             {
-//                               value: 'iPad1',
-//                               label: 'iPad正式'
-//                             },
-//
-//                           ];
+Vue.prototype.envOption = [
+                            {
+                              value: 'IOS1',
+                              label: 'IOS正式'
+                            },
+                            {
+                              value: 'Android1',
+                              label: 'Android正式'
+                            },
+                            {
+                              value: 'PC1',
+                              label: 'PC正式'
+                            },
+                            {
+                              value: 'iPad1',
+                              label: 'iPad正式'
+                            },
+
+                          ];
 
 //测试
 
-Vue.prototype.envOption = [
-  {
-    value: 'IOS1',
-    label: 'IOS正式'
-  },
-  {
-    value: 'IOS2',
-    label: 'IOS测试'
-  },
-  {
-    value: 'IOS3',
-    label: 'IOS本地'
-  },
-  {
-    value: 'Android1',
-    label: 'Android正式'
-  },
-  {
-    value: 'Android2',
-    label: 'Android测试'
-  },
-  {
-    value: 'Android3',
-    label: 'Android本地'
-  },
-  {
-    value: 'PC1',
-    label: 'PC正式'
-  },
-  {
-    value: 'PC2',
-    label: 'PC测试'
-  },
-  {
-    value: 'PC3',
-    label: 'PC本地'
-  },
-  {
-    value: 'iPad1',
-    label: 'iPad正式'
-  },
-  {
-    value: 'iPad2',
-    label: 'iPad测试'
-  },
-  {
-    value: 'iPad3',
-    label: 'iPad本地'
-  }
-];
+// Vue.prototype.envOption = [
+//   {
+//     value: 'IOS1',
+//     label: 'IOS正式'
+//   },
+//   {
+//     value: 'IOS2',
+//     label: 'IOS测试'
+//   },
+//   {
+//     value: 'IOS3',
+//     label: 'IOS本地'
+//   },
+//   {
+//     value: 'Android1',
+//     label: 'Android正式'
+//   },
+//   {
+//     value: 'Android2',
+//     label: 'Android测试'
+//   },
+//   {
+//     value: 'Android3',
+//     label: 'Android本地'
+//   },
+//   {
+//     value: 'PC1',
+//     label: 'PC正式'
+//   },
+//   {
+//     value: 'PC2',
+//     label: 'PC测试'
+//   },
+//   {
+//     value: 'PC3',
+//     label: 'PC本地'
+//   },
+//   {
+//     value: 'iPad1',
+//     label: 'iPad正式'
+//   },
+//   {
+//     value: 'iPad2',
+//     label: 'iPad测试'
+//   },
+//   {
+//     value: 'iPad3',
+//     label: 'iPad本地'
+//   }
+// ];
 
 // 产业轴
-
-Vue.prototype.axisSeven = [
+// IOS Android
+Vue.prototype.axisSevenApp = [
+  // {
+  //   value: 1,
+  //   label: '1-环境'
+  // }, {
+  //   value: 2,
+  //   label: '2-农业'
+  // }, {
+  //   value: 3,
+  //   label: '3-健康'
+  // }, {
+  //   value: 4,
+  //   label: '4-公共'
+  // }, {
+  //   value: 5,
+  //   label: '5-工业'
+  // }, {
+  //   value: 6,
+  //   label: '6-商贸'
+  // },
+  // {
+  //   value: 7,
+  //   label: '7-文化'
+  // }
   {
     value: 1,
-    label: '1-环境'
+    label: '1'
   }, {
     value: 2,
-    label: '2-农业'
+    label: '2'
   }, {
     value: 3,
-    label: '3-工业'
+    label: '3'
   }, {
     value: 4,
-    label: '4-健康'
+    label: '4'
   }, {
     value: 5,
-    label: '5-商贸'
+    label: '5'
   }, {
     value: 6,
-    label: '6-公共'
+    label: '6'
   },
   {
     value: 7,
-    label: '7-文化'
+    label: '7'
   }
 ]
-
+// PC
+Vue.prototype.axisSeven = [
+  // {
+  //   value: 1,
+  //   label: '1-环境'
+  // }, {
+  //   value: 2,
+  //   label: '2-农业'
+  // }, {
+  //   value: 3,
+  //   label: '3-工业'
+  // }, {
+  //   value: 4,
+  //   label: '4-健康'
+  // }, {
+  //   value: 5,
+  //   label: '5-商贸'
+  // }, {
+  //   value: 6,
+  //   label: '6-公共'
+  // },
+  // {
+  //   value: 7,
+  //   label: '7-文化'
+  // }
+  {
+    value: 1,
+    label: '1'
+  }, {
+    value: 2,
+    label: '2'
+  }, {
+    value: 3,
+    label: '3'
+  }, {
+    value: 4,
+    label: '4'
+  }, {
+    value: 5,
+    label: '5'
+  }, {
+    value: 6,
+    label: '6'
+  },
+  {
+    value: 7,
+    label: '7'
+  }
+]
+// iPad
 Vue.config.productionTip = false

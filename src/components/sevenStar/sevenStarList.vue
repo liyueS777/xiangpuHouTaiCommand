@@ -5,7 +5,7 @@
         v-for="item in optionComp"
         :key="item.compId"
         :label="item.compName"
-        :value="item">
+        :value="item.compCode">
       </el-option>
     </el-select>
 
@@ -35,19 +35,22 @@
     <el-table
       :data="sevenStarListItem"
       border
+      max-height="530"
       :default-sort = "{prop: 'position', order: 'descending'}"
       :empty-text="' '"
       style="width: 100%">
       <el-table-column
         label="集团编码"
-        width="150">
+        width="150"
+        fixed
+      >
         <template scope="scope">
           <!--<el-icon name="time"></el-icon>-->
           <span>{{ scope.row.orgName }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="产业轴"
+        label="七星位置"
         sortable
         :sort-method="changeSort"
         prop="position"
@@ -58,7 +61,7 @@
           <!---->
           <!--</div>-->
           <!--</el-popover>-->
-          <span>{{ scope.row.industryId | convertSevenAxis}}</span>
+          <span>{{ scope.row.industryId | convertSevenAxis(scope.row.env)}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -76,7 +79,7 @@
       </el-table-column>
       <el-table-column
         label="名称"
-        width="150">
+        width="180">
         <template scope="scope">
           <!--<el-popover trigger="hover" placement="top">-->
             <!--<p>{{ scope.row.confType=='Company'?scope.row.subCompName:scope.row.popName }}</p>-->
@@ -96,7 +99,7 @@
       </el-table-column>
       <el-table-column
         label="子公司编码"
-        width="150">
+        width="180">
         <template scope="scope">
           <!--<el-popover trigger="hover" placement="top">-->
             <!--<p>{{ scope.row.subCompCode?scope.row.subCompCode:'暂无' }}</p>-->
@@ -130,7 +133,7 @@
           <el-tag>{{ scope.row.env | convertEnv }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" fixed="right" min-width="140">
         <template scope="scope">
           <el-button
             size="small"
@@ -163,7 +166,7 @@
         envMsg:{},
         optionsEnvMsg:this.envOption,
         showclose:false,
-        compOption:{},
+        compOption:'',
         pageShow:false,
         currentPage: 1,
         pageSize:6,
@@ -212,12 +215,17 @@
       getComp(){
         const that = this;
         if(that.$store.getters.user.grade==1){
-          this.compOption = {
+            this.compOption = that.$store.getters.user.company.comp_code;
+//          this.compOption = {
+//            compCode:that.$store.getters.user.company.comp_code,
+//            compId:that.$store.getters.user.company.id,
+//            compName:that.$store.getters.user.company.comp_name
+//          };
+          that.optionComp[0] = {
             compCode:that.$store.getters.user.company.comp_code,
             compId:that.$store.getters.user.company.id,
             compName:that.$store.getters.user.company.comp_name
-          };
-          that.optionComp[0] = this.compOption;
+          };;
           return false;
         }else if(that.$store.getters.user.grade==0){
           return that.$Ajax.post(that.Host+'/sevenStarController/getAllCompany',{})
@@ -241,7 +249,7 @@
       },
       init(){
         const that = this;
-        if(!that.compOption.compCode){
+        if(!that.compOption){
           this.$message({
             message: '请先选择集团公司',
             type: 'warning',
@@ -270,7 +278,7 @@
         }
         this.$Ajax
           .post(this.Host+'/sevenStarController/getSevenStarByOrgName',{
-            orgName:that.compOption.compCode,
+            orgName:that.compOption,
             env:that.envMsg.value,
             version:that.version
           })

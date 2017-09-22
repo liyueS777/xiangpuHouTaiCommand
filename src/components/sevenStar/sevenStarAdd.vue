@@ -10,20 +10,7 @@
               v-for="item in compOption"
               :key="item.compId"
               :label="item.compName"
-              :value="item">
-            </el-option>
-          </el-select>
-        </div>
-      </li>
-      <li class="clearfix">
-        <div>产业轴</div>
-        <div>
-          <el-select v-model="IndustryAxis" placeholder="请选择产业轴">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item">
+              :value="item.compId">
             </el-option>
           </el-select>
         </div>
@@ -34,6 +21,19 @@
           <el-select v-model="envMsg" placeholder="请选择环境信息" :disabled="EnvDisabled" @change="selectEnv">
             <el-option
               v-for="item in envOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item">
+            </el-option>
+          </el-select>
+        </div>
+      </li>
+      <li class="clearfix">
+        <div>七星位置</div>
+        <div>
+          <el-select v-model="IndustryAxis" placeholder="请选择产业轴">
+            <el-option
+              v-for="item in options"
               :key="item.value"
               :label="item.label"
               :value="item">
@@ -81,13 +81,11 @@
               v-for="item in subCompOption"
               :key="item.compId"
               :label="item.compName"
-              :value="item">
+              :value="item.compCode">
             </el-option>
           </el-select>
         </div>
       </li>
-
-
     </ul>
     <div class="block">
         <span class="wrapper">
@@ -104,7 +102,7 @@
     {
       return {
         noCompany:true,
-        subComp:{},
+        subComp:'',
         subCompOption:[],
         pattern:{},
         PotionIdCode:null,
@@ -112,8 +110,8 @@
         PositionID:{},
         titleMsg:'',
         version:'',
-        compID:{},
-        compOption:{},
+        compID:'',
+        compOption:[],
         patternOption:[
 //          {
 //            value:'URL',
@@ -145,12 +143,17 @@
     {
       const that = this;
       if(that.$store.getters.user.grade==1){
-        this.compID = {
+        this.compID = that.$store.getters.user.company.id;
+//        this.compID = {
+//          compCode:that.$store.getters.user.company.comp_code,
+//          compId:that.$store.getters.user.company.id,
+//          compName:that.$store.getters.user.company.comp_name
+//        };
+        that.compOption[0] = {
           compCode:that.$store.getters.user.company.comp_code,
           compId:that.$store.getters.user.company.id,
           compName:that.$store.getters.user.company.comp_name
         };
-        that.compOption[0] = this.compID;
       }else if(that.$store.getters.user.grade==0){
         that.$Ajax
           .post(that.Host+'/sevenStarController/getAllCompany',{})
@@ -172,12 +175,12 @@
           if(this.pattern.value == 'Company'){
             this.$Ajax
               .post(this.Host+'/sevenStarController/getAllSubCompany',{
-                compId:key.compId
+                compId:key
               })
               .then((response) => {
                 console.log(response.data);
                 this.subCompOption = response.data.data;
-                this.subComp = {};
+                this.subComp = '';
               })
               .catch(function (error) {
                 console.log(error);
@@ -186,7 +189,7 @@
       },
       selectPositionID(key,callback){
         const that = this;
-        if(!this.compID.compCode){
+        if(!this.compID){
           this.$message({
             message: '请先选择企业信息',
             type: 'warning',
@@ -215,9 +218,12 @@
           return;
         }
         else{
+            let parentMsg = this.compOption.find((value)=>{
+                return this.compID==value.compId
+            });
           this.$Ajax
             .post(this.Host+'/sevenStarController/isPosIdExist',{
-              orgName:this.compID.compCode,
+              orgName:parentMsg.compCode,
               posId:key,
               industryId:this.IndustryAxis.value,
               confType:this.pattern.value,
@@ -256,7 +262,7 @@
             this.noCompany = false;
             this.$Ajax
               .post(this.Host+'/sevenStarController/getAllSubCompany',{
-                compId:this.compID.compId
+                compId:this.compID
               })
               .then((response) => {
                   console.log(response.data);
@@ -304,23 +310,22 @@
           })
         }
       },
-      selectEnv(){
-//        const that = this;
-//        if(!that.pattern.value){
-//          this.$message({
-//            message: '请先选择类型',
-//            type: 'warning',
-//            duration:1000,
-//            onClose: function () {
-//              that.envMsg = null;
-//              that.EnvDisabled = true;
-//            }
-//          });
-//        }
+      selectEnv(key){
+        const that = this;
+        console.log(key);
+        if(key.value.indexOf('PC')>-1){
+          this.options = this.axisSeven
+        }
+        else if(key.value.indexOf('iPad')>-1){
+          this.options = this.axisSeven
+        }
+        else {
+          this.options = this.axisSevenApp
+        }
       },
       configConfirm(){
         const that = this;
-        if(!this.compID.compName){
+        if(!this.compID){
           this.$message({
             message: '请先选择集团信息',
             type: 'warning',
@@ -353,7 +358,7 @@
           });
           return;
         }
-        else if(that.pattern.value=='Company' && !that.subComp.compName){
+        else if(that.pattern.value=='Company' && !that.subComp){
           this.$message({
             message: '请先选择子公司',
             type: 'warning',
@@ -386,9 +391,12 @@
 //          return;
 //        }
         if(that.pattern.value=='Label'){
+          let parentMsg = this.compOption.find((value)=>{
+            return this.compID==value.compId
+          });
           this.$Ajax
             .post(this.Host+'/sevenStarController/isOnlyLabelExist',{
-              orgName:this.compID.compCode,
+              orgName:parentMsg.compCode,
               industryId:this.IndustryAxis.value,
               confType:this.pattern.value,
               env:this.envMsg.value,
@@ -421,15 +429,23 @@
       },
       getAddSevenSuccess(){
         const that = this;
+        let parentMsg = that.compOption.find((value)=>{
+          return that.compID==value.compId
+        });
+//        subComp:'',
+//          subCompOption:[],
+        let childMsg = that.subComp && that.subCompOption.find((value)=>{
+          return that.subComp==value.compCode
+        });
         that.$Ajax
           .post(that.Host+'/sevenStarController/addSevenStar', {
-            orgName:that.compID.compCode,
+            orgName:parentMsg.compCode,
             industryId:that.IndustryAxis.value,
             posId:that.intialNum,
             popName:that.titleMsg,
-            subCompName:that.pattern.value=='Company'?that.subComp.compName:'Default',
+            subCompName:that.pattern.value=='Company'?childMsg.compName:'Default',
             confType:that.pattern.value,
-            subCompCode:that.pattern.value=='Company'?that.subComp.compCode:'Default',
+            subCompCode:that.pattern.value=='Company'?that.subComp:'Default',
             version:that.version,
             env:that.envMsg.value,
           })

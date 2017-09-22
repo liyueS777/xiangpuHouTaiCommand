@@ -6,17 +6,17 @@
         <el-select v-model="compOption" placeholder="请选择企业" class="configSelect1" @change="selectCompany">
           <el-option
             v-for="(item,index) in optionComp"
-            :key="index.compId"
+            :key="item.compId"
             :label="item.compName"
-            :value="item">
+            :value="item.compId">
           </el-option>
         </el-select>
         <el-select v-model="ChildRenCompany" placeholder="请选择子公司信息" clearable>
           <el-option
-            v-for="item in ChildRenCompanyItem"
+            v-for="(item,index) in ChildRenCompanyItem"
             :key="item.compId"
             :label="item.compName"
-            :value="item">
+            :value="item.compCode">
           </el-option>
         </el-select>
         <el-select v-model="version" placeholder="请选择版本" class="v-s">
@@ -52,9 +52,9 @@
         <el-select v-model="CopycompOption" placeholder="请选择企业" class="configSelect1" @change="selectCopyCompany">
           <el-option
             v-for="(item,index) in optionComp"
-            :key="index.compId"
+            :key="item.compId"
             :label="item.compName"
-            :value="item">
+            :value="item.compId">
           </el-option>
         </el-select>
 
@@ -63,7 +63,7 @@
             v-for="item in CopyChildRenCompanyItem"
             :key="item.compId"
             :label="item.compName"
-            :value="item">
+            :value="item.compCode">
           </el-option>
         </el-select>
 
@@ -190,17 +190,17 @@
       data() {
             return {
               Copyversion:'',
-              CopycompOption:{},
-              CopyChildRenCompany:{},
+              CopycompOption:'',
+              CopyChildRenCompany:'',
               CopyifActive:'',
               CopyChildRenCompanyItem:[],
 
               version:'',
               optionVersion:[],
-              compOption:{},
+              compOption:'',
               //d
               optionComp:[],
-              ChildRenCompany:{},
+              ChildRenCompany:'',
               ChildRenCompanyItem:[],
               envMsg:{},
               CopyenvMsg:{},
@@ -257,10 +257,10 @@
       methods: {
             selectCompany(key){
               const that = this;
-              that.ChildRenCompany = {};
+              that.ChildRenCompany = '';
               that.$Ajax
                 .post(that.Host+'/sevenStarController/getAllSubCompany',{
-                  compId:key.compId
+                  compId:key
                 })
                 .then(function (response) {
                   console.log(response.data,1111111);
@@ -274,11 +274,11 @@
             },
             selectCopyCompany(key){
               const that = this;
-              that.CopyChildRenCompany = {};
+              that.CopyChildRenCompany = '';
 
               that.$Ajax
                 .post(that.Host+'/sevenStarController/getAllSubCompany',{
-                  compId:key.compId
+                  compId:key
                 })
                 .then(function (response) {
                   console.log(response.data,1111111);
@@ -292,7 +292,7 @@
             },
             startCopy(){
               const that = this;
-              if(!this.compOption.compId){
+              if(!this.compOption){
                 this.$message({
                   message: '请先选择原始配置企业信息',
                   type: 'warning',
@@ -329,7 +329,7 @@
               }
 
 
-              if(!this.CopycompOption.compId){
+              if(!this.CopycompOption){
                 this.$message({
                   message: '请先选择生成配置企业信息',
                   type: 'warning',
@@ -382,7 +382,7 @@
               that.fullscreenLoading = true;
               //原始信息
               let paramsPrev = {
-                compId:that.compOption.compId,
+                compId:that.compOption,
 //                subCompCode:that.ChildRenCompany.compCode,
                 appVersion:that.version,
                 appEnvName:that.envMsg.value,
@@ -390,12 +390,12 @@
                 pageIndex:1,
                 pageSize:30
               };
-              if(that.ChildRenCompany&&that.ChildRenCompany.compCode){
-                paramsPrev['subCompCode'] = that.ChildRenCompany.compCode
+              if(that.ChildRenCompany){
+                paramsPrev['subCompCode'] = that.ChildRenCompany
               }
               //  生成信息
               let paramsCopy = {
-                compId:that.CopycompOption.compId,
+                compId:that.CopycompOption,
 //                subCompCode:that.CopyChildRenCompany.compCode,
                 appVersion:that.Copyversion,
                 appEnvName:that.CopyenvMsg.value,
@@ -403,8 +403,8 @@
                 pageIndex:1,
                 pageSize:30
               };
-              if(that.CopyChildRenCompany&&that.CopyChildRenCompany.compCode){
-                paramsCopy['subCompCode'] = that.CopyChildRenCompany.compCode
+              if(that.CopyChildRenCompany){
+                paramsCopy['subCompCode'] = that.CopyChildRenCompany
               };
               that.$Ajax.all([that.$Ajax.post(that.Host+'/appController/queryPageApplication',paramsPrev), that.$Ajax.post(that.Host+'/appController/queryPageApplication',paramsCopy)])
                 .then(that.$Ajax.spread(function (resPrev, resCopy) {
@@ -457,7 +457,7 @@
               }
               //先检测数据库有没有为空；
               let params = {
-                compId:that.CopycompOption.compId,
+                compId:that.CopycompOption,
 //                subCompCode:that.CopyChildRenCompany.compCode,
                 appVersion:that.Copyversion,
                 appEnvName:that.CopyenvMsg.value,
@@ -465,8 +465,8 @@
                 pageIndex:1,
                 pageSize:30
               };
-              if(that.CopyChildRenCompany&&that.CopyChildRenCompany.compCode){
-                params['subCompCode'] = that.CopyChildRenCompany.compCode
+              if(that.CopyChildRenCompany){
+                params['subCompCode'] = that.CopyChildRenCompany
               };
               console.log(this.copyMsgItem,params,9090);
               this.$Ajax
@@ -483,6 +483,17 @@
                   }else if(res.data.code==0 && !res.data.data){
                     //排除生成配置数据库没有数据情况下可以进行复制;
                     //在这里进行数据操作，减少for循环，优化
+//                    CopyChildRenCompany:'',
+//                      CopyifActive:'',
+//                      CopyChildRenCompanyItem:[],
+                    //子公司信息
+                    let copyChildMsg = that.CopyChildRenCompany && that.CopyChildRenCompanyItem.find((value)=>{
+                        return value.compCode==that.CopyChildRenCompany
+                      })
+                    //公司信息
+                    let copyParentMsg = that.CopycompOption && that.optionComp.find((value)=>{
+                        return value.compId==that.CopycompOption
+                      })
                     for(let i=0,len=that.copyMsgItem.length;i<len;i++){
                       // 处理 redirUrl 的empty 问题 toUpperCase
                         if(!that.copyMsgItem[i]["redirUrl"].trim()){
@@ -499,15 +510,14 @@
                         delete that.copyMsgItem[i]["id"];
                         delete that.copyMsgItem[i]["createTime"];
                         delete that.copyMsgItem[i]["updateTime"];
-                        that.copyMsgItem[i]["compId"] = that.CopycompOption.compId
-                        that.copyMsgItem[i]["compCode"] = that.CopycompOption.compCode
-                      console.log('办呢本',that.Copyversion);
+                        that.copyMsgItem[i]["compId"] = copyParentMsg.compId;
+                        that.copyMsgItem[i]["compCode"] = copyParentMsg.compCode;
                         that.copyMsgItem[i]["appVersion"] = that.Copyversion
                         that.copyMsgItem[i]["isActived"] = that.CopyifActive
                         that.copyMsgItem[i]["appEnvName"] = that.CopyenvMsg.value
-                        if(that.CopyChildRenCompany&&that.CopyChildRenCompany.compCode){
-                          that.copyMsgItem[i]["subCompCode"] = that.CopyChildRenCompany.compCode;
-                          that.copyMsgItem[i]["subCompName"] = that.CopyChildRenCompany.compName;
+                        if(that.CopyChildRenCompany){
+                          that.copyMsgItem[i]["subCompCode"] = copyChildMsg.compCode;
+                          that.copyMsgItem[i]["subCompName"] = copyChildMsg.compName;
                         }
                     }
                     that.$Ajax

@@ -120,6 +120,11 @@
   height:100%;
   .child-view {
     transition: all .5s cubic-bezier(.55,0,.1,1);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left:0;
+    top: 0;
   }
   .slide-left-enter, .slide-right-leave-active {
     opacity: 0;

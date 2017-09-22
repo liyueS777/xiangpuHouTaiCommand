@@ -16,7 +16,7 @@
                 v-for="item in optionscascader"
                 :key="item.compId"
                 :label="item.compName"
-                :value="item"
+                :value="item.compId"
                 >
               </el-option>
             </el-select>
@@ -27,7 +27,7 @@
                 v-for="item in ChildRenCompanyItem"
                 :key="item.compId"
                 :label="item.compName"
-                :value="item">
+                :value="item.compCode">
               </el-option>
             </el-select>
           </div>
@@ -173,8 +173,8 @@
           ajaxUrl:'',
           ifAjax:false,
           hasChildRenCompany:false,
-          selectedOptionscascader:[],
-          ChildRenCompany:{},
+          selectedOptionscascader:'',
+          ChildRenCompany:'',
           ChildRenCompanyItem:[],
           optionscascader:[],
           props: {
@@ -229,16 +229,21 @@
 
       that.version = Connect.version?Connect.version:'';
       if(that.$store.getters.user.grade==1){
-        this.selectedOptionscascader = {
+        this.selectedOptionscascader = that.$store.getters.user.company.id;
+//        this.selectedOptionscascader = {
+//          compCode:that.$store.getters.user.company.comp_code,
+//          compId:that.$store.getters.user.company.id,
+//          compName:that.$store.getters.user.company.comp_name
+//        };
+        that.optionscascader[0] = {
           compCode:that.$store.getters.user.company.comp_code,
           compId:that.$store.getters.user.company.id,
           compName:that.$store.getters.user.company.comp_name
         };
-        that.optionscascader[0] = this.selectedOptionscascader;
-        if(that.selectedOptionscascader.compId){
+        if(that.selectedOptionscascader){
           that.$Ajax
             .post(that.Host+'/sevenStarController/getAllSubCompany',{
-              compId:that.selectedOptionscascader.compId
+              compId:that.selectedOptionscascader
             })
             .then(function (response) {
               console.log(response.data,1111111);
@@ -307,7 +312,7 @@
 //          that.$nextTick(()=>{
             that.$Ajax
               .post(that.Host+'/sevenStarController/getAllSubCompany',{
-                  compId:key.compId
+                  compId:key
               })
               .then(function (response) {
                 console.log(response.data,1111111);
@@ -328,7 +333,7 @@
       },
       selectPositionID(key,callBack){
         let that = this;
-          if(!that.selectedOptionscascader.compId){
+          if(!that.selectedOptionscascader){
             that.$message({
                 message: '请先选择企业信息',
                 type: 'warning',
@@ -373,12 +378,12 @@
               that.ifAjax = false;
             }
             var params;
-            if(that.ChildRenCompany.compCode){
+            if(that.ChildRenCompany){
               params = {
                 appEnvName: that.envMsg,
                 btnPosId: that.envID,
-                compId:that.selectedOptionscascader.compId,
-                subCompCode:that.ChildRenCompany.compCode,
+                compId:that.selectedOptionscascader,
+                subCompCode:that.ChildRenCompany,
                 isActived:that.ifActive,
                 version:that.version.trim()
               }
@@ -386,7 +391,7 @@
               params = {
                 appEnvName: that.envMsg,
                 btnPosId: that.envID,
-                compId:that.selectedOptionscascader.compId,
+                compId:that.selectedOptionscascader,
                 isActived:that.ifActive,
                 version:that.version.trim()
               }
@@ -419,7 +424,7 @@
       },
       configConfirm(){
           const that = this;
-          if(!this.selectedOptionscascader.compId){
+          if(!this.selectedOptionscascader){
             this.$message({
               message: '请先选择企业信息',
               type: 'warning',
@@ -504,12 +509,15 @@
 //                return;
 //              }
 //          }
+        let parentMsg = that.optionscascader.find((value)=>{
+              return that.selectedOptionscascader==value.compId
+        })
         let paramsObj = {
           appVersion:that.version,
           appEnvName: that.envMsg,
           btnPosId: that.envID,
-          compId:that.selectedOptionscascader.compId,
-          compCode:that.selectedOptionscascader.compCode,
+          compId:that.selectedOptionscascader,
+          compCode:parentMsg.compCode,
           isActived:that.ifActive,
           btnPosDes:that.posMsg.trim(),
           btnIconDir:that.imgUrl,
@@ -518,9 +526,13 @@
           otherParam:that.params.trim(),
 //          userAuth:JSON.stringify(that.userAuth)
         };
-          if(that.ChildRenCompany.compCode){
-            paramsObj["subCompCode"] = that.ChildRenCompany.compCode;
-            paramsObj["subCompName"] = that.ChildRenCompany.compName;
+          let childMsg = that.ChildRenCompany && that.ChildRenCompanyItem.find((value)=>{
+              return that.ChildRenCompany == value.compCode
+          });
+          if(that.ChildRenCompany){
+
+            paramsObj["subCompCode"] = that.ChildRenCompany;
+            paramsObj["subCompName"] = childMsg.compName;
           };
           if((that.envMsg.indexOf('PC') > -1 && that.envID<=3) || (that.envMsg.indexOf('PC') <= -1 &&　that.envID==14)){
             paramsObj["ajaxUrl"] = that.ajaxUrl.trim();
