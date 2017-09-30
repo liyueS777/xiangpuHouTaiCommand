@@ -9,15 +9,6 @@
         <el-form-item prop="password">
           <el-input type="password" placeholder="请输入密码" v-model="ruleForm.password" @keyup.enter.native="submit"></el-input>
         </el-form-item>
-        <div>
-          <span>相关图片内外网选择：</span>
-          <span>
-            <el-radio-group v-model="radioChange" @change="selectRadioImgPre">
-                <el-radio class="radio" v-model="radio" label="http://172.19.6.104:8091/NVRCT/">内网</el-radio>
-                <el-radio class="radio" v-model="radio" label="http://58.250.204.31:18091/NVRCT/">外网</el-radio>
-            </el-radio-group>
-          </span>
-        </div>
         <div class="login-btn">
           <el-button type="primary" @click.native.prevent="submit">登&nbsp;录</el-button>
         </div>
@@ -32,8 +23,7 @@
   export default {
     data: function(){
       return {
-        radio: null,
-        radioChange:'',
+//        radio2: 3,
         ruleForm: {
           username: '',
           password: '',
@@ -51,10 +41,6 @@
 //        console.log(this.$store.getter.user);
     },
     methods: {
-      selectRadioImgPre(key){
-          console.log(key);
-//          this.$store.dispatch('onChangeImgPreInfo',key);
-      },
       submit(){
         const that = this;
         that.$refs.ruleForm.validate((valid) => {
@@ -63,50 +49,36 @@
 //          that.$router.push({path: that.$route.query.redirect ? that.$route.query.redirect : '/home'});
 //          return;
           if (valid) {
-              if(!that.radioChange){
-                that.$message({
-                  type: 'warning',
-                  message: '请先选择图片内外网地址',
-                  duration: 2000
-                });
-                 return;
-              }else {
-                let reqData = {
-                  "account":that.ruleForm.username,
-                  "password":that.ruleForm.password
-                };
-                that.$Ajax.post(that.HostLogin+'/Auth/adminLogin', reqData).then(function (res) {
-                  if (res.data.success ==true) {
-                    if(res.data.data.grade == 2){
-                      that.$message({
-                        type: 'warning',
-                        message: '该账号不是平台管理员或者集团管理员，没有该权限~',
-                        duration: 2000
-                      });
-                      return;
-                    }
-                    that.$store.commit('updateUser',res.data.data);
-                    that.$store.dispatch('onChangeImgPreInfo',that.radioChange);
-                    sessionStorage.setItem('userInfo',JSON.stringify(res.data.data));
-                    sessionStorage.setItem('ImgPreInfo',that.radioChange);
-
-                    // 这里有个重定向，通过query来把之前的进去的路由保存起来，这样有在登陆之后在进入
-                    that.$router.push({path: that.$route.query.redirect ? that.$route.query.redirect : '/home'});
-                  } else {
+            let reqData = {
+              "account":that.ruleForm.username,
+              "password":that.ruleForm.password
+            };
+            that.$Ajax.post(that.HostLogin+'/Auth/adminLogin', reqData).then(function (res) {
+              if (res.data.success ==true) {
+                  if(res.data.data.grade == 2){
                     that.$message({
                       type: 'warning',
-                      message: res.data.msg,
+                      message: '该账号不是平台管理员或者集团管理员，没有该权限~',
                       duration: 2000
                     });
+                    return;
                   }
-                }).catch(function (error) {
-                  that.logining = false;
-                  that.$message.err(error);
+                that.$store.commit('updateUser',res.data.data);
+                sessionStorage.setItem('userInfo',JSON.stringify(res.data.data));
+                // 这里有个重定向，通过query来把之前的进去的路由保存起来，这样有在登陆之后在进入
+                that.$router.push({path: that.$route.query.redirect ? that.$route.query.redirect : '/home'});
+              } else {
+                that.$message({
+                  type: 'warning',
+                  message: res.data.msg,
+                  duration: 2000
                 });
               }
-
-          }
-          else {
+            }).catch(function (error) {
+              that.logining = false;
+              that.$message.err(error);
+            });
+          } else {
             return false;
           }
         });
@@ -143,7 +115,7 @@
     left:50%;
     top:50%;
     width:300px;
-    height:180px;
+    height:160px;
     margin:-150px 0 0 -190px;
     padding:40px;
     border-radius: 8px;

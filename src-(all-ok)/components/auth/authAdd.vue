@@ -140,7 +140,6 @@
   </div>
 </template>
 <script>
-  import {mapState} from 'vuex'
   import Connect from '../../state/VueConnect'
   import configheader from '../common/configHeader.vue'
   import imgupload from '../common/imgUpload.vue'
@@ -179,16 +178,11 @@
 
         options: this.envOption,
         titleConfig:'',
-//        imgUrlPre:this.Host,
+        imgUrlPre:this.Host,
 //        result:{}
       }
     }
     ,
-    computed:{
-      ...mapState({
-        'imgUrlPre':state => state.login.changeImgPreInfo
-      })
-    },
     created()
     {
       const that = this;
@@ -286,14 +280,10 @@
         that.ImgMMain = result.indexLogoDir;
         that.ImgMAbout = result.aboutLogoDir;
         // 这里在传给图片时加一个时间搓，保证每次传给子组件的都是不一样的url地址，让其刷新；
-//        that.fileListMAuth =that.imgUrlPre+'/'+result.authLogoDir+'?'+ +new Date() ;
-//        that.fileListMMain =that.imgUrlPre+'/'+result.indexLogoDir+'?'+ +new Date() ;
-//        that.fileListMAbout =that.imgUrlPre+'/'+result.aboutLogoDir+'?'+ +new Date();
-//        that.fileListMLogin =that.imgUrlPre+'/'+result.loginLogoDir+'?'+ +new Date();
-        that.fileListMAuth =that.imgUrlPre +result.authLogoDir+'?'+ +new Date() ;
-        that.fileListMMain =that.imgUrlPre +result.indexLogoDir+'?'+ +new Date() ;
-        that.fileListMAbout=that.imgUrlPre +result.aboutLogoDir+'?'+ +new Date();
-        that.fileListMLogin=that.imgUrlPre +result.loginLogoDir+'?'+ +new Date();
+        that.fileListMAuth =that.imgUrlPre+'/'+result.authLogoDir+'?'+ +new Date() ;
+        that.fileListMMain =that.imgUrlPre+'/'+result.indexLogoDir+'?'+ +new Date() ;
+        that.fileListMAbout =that.imgUrlPre+'/'+result.aboutLogoDir+'?'+ +new Date();
+        that.fileListMLogin =that.imgUrlPre+'/'+result.loginLogoDir+'?'+ +new Date();
       },
       receptImgMLogin(res){
         this.ImgMLogin = res;

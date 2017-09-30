@@ -182,7 +182,6 @@
     </div>
 </template>
 <script>
-  import {mapState} from 'vuex';
   import imgupload from '../common/imgUpload.vue'
     export default {
       components: {
@@ -218,16 +217,11 @@
               ],
 
               copyMsgItem:[],
-//              imgPre:this.$store.getters.changeImgPre,
+              imgPre:this.Host+'/',
 //              imgReplaceArr:[]
               fullscreenLoading: false
             }
         },
-      computed:{
-        ...mapState({
-          'imgPre':state => state.login.changeImgPreInfo
-        })
-      },
       created() {
             const that = this;
             that.$Ajax

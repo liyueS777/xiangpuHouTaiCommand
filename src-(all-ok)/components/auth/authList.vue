@@ -201,7 +201,6 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
   import ConnectState from '../../state/VueConnect'
   import configedit from './authAdd.vue'
   export default {
@@ -221,17 +220,12 @@
         dialogTableVisible:false,
         itemtitle:'',
         authItem:{},
-//        imgUrlPre:this.$store.getters.changeImgPre,
+        imgUrlPre:this.Host+'/',
         editSelectMsg:''
       };
     },
     mounted(){//一来dom 的存在就放在mounted ，配合this.$nextTick（）
 //        this.listOff=false;
-    },
-    computed:{
-      ...mapState({
-        'imgUrlPre':state => state.login.changeImgPreInfo
-      })
     },
     created(){
 //        let a =1;

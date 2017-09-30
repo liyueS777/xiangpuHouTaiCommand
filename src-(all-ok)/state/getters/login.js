@@ -13,14 +13,7 @@ export  const loginGetters = {
       state.userInfo = JSON.parse(sessionStorage['userInfo'] || '{}');
     }
     return !isEmptyObject(state.userInfo);
-  },
-  changeImgPre:state => {
-    if(!state.changeImgPreInfo){
-      state.changeImgPreInfo = sessionStorage['ImgPreInfo'];
-    }
-    return state.changeImgPreInfo;
   }
-
 }
 
 

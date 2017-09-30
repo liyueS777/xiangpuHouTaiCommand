@@ -4,21 +4,10 @@
       <div class="medium">
         <navbar class="medium-left"></navbar>
         <div class="medium-right">
-          <div class="clearfix">
-            <el-breadcrumb class="m-bread" separator="/">
-              <el-breadcrumb-item>{{breadcrumb1}}</el-breadcrumb-item>
-              <el-breadcrumb-item :to="{ path: breadcrumbRoute2 }">{{breadcrumb2}}</el-breadcrumb-item>
-            </el-breadcrumb>
-            <div class="selectRadio">
-              <span>查看相关图片内外网选择：</span>
-              <span>
-            <el-radio-group v-model="radioChange" @change="selectRadioImgPre">
-                <el-radio class="radio" v-model="radio" label="http://172.19.6.104:8091/NVRCT/">内网</el-radio>
-                <el-radio class="radio" v-model="radio" label="http://58.250.204.31:18091/NVRCT/">外网</el-radio>
-            </el-radio-group>
-          </span>
-            </div>
-          </div>
+          <el-breadcrumb class="m-bread" separator="/">
+            <el-breadcrumb-item>{{breadcrumb1}}</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: breadcrumbRoute2 }">{{breadcrumb2}}</el-breadcrumb-item>
+          </el-breadcrumb>
           <div class="content">
             <transition :name="transitionName">
               <router-view class="homeChildView"></router-view>
@@ -37,8 +26,6 @@
     export default {
         data() {
             return {
-              radioChange:this.$store.getters.changeImgPre,
-              radio:'',
               msg:null,
               transitionName: 'slide-left',
               breadcrumb1:'',
@@ -49,10 +36,6 @@
         }, created() {
         this.checkRoute(this.$route);
         }, methods: {
-        selectRadioImgPre(key){
-          console.log(key);
-          this.$store.dispatch('onChangeImgPreInfo',key);
-        },
             checkRoute(newRoute){
               if(newRoute.fullPath=='/home'){
 
@@ -200,24 +183,14 @@
         height: 100%;
         box-sizing: border-box;
         padding-left: 10px;
-        padding-top: 10px;
         .m-bread {
           /*line-height: 24px;*/
           /*overflow: hidden;*/
           font-size: 16px;
           box-sizing: border-box;
           padding-left: 60px;
-
+          padding-top: 10px;
           line-height: 30px;
-          float: left;
-        }
-        .selectRadio {
-          float: left;
-          height: 30px;
-          line-height: 30px;
-          padding-left: 100px;
-          font-size: 14px;
-          box-sizing: border-box;
         }
         > .content {
           /*padding-top: 10px;*/

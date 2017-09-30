@@ -44,8 +44,6 @@ router.beforeEach((to, from, next) => {
   if (to.path == '/login') {
     // store.commit('updateUser', {});
     store.dispatch('onDelUserInfo', {});
-    //清除图片前缀地址；
-    store.dispatch('onChangeImgPreInfo','');
   }
   if (!store.getters.isLogin && to.path != '/login') {
 

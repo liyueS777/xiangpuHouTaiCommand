@@ -235,7 +235,6 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
   import ConnectState from '../../state/VueConnect'
   import configedit from './configEdit.vue'
   export default {
@@ -261,8 +260,7 @@
         optionComp:[],
         optionVersion:[],
         congigListItem:[],
-        //这里已经通过状态属性有了属性了
-//        imgUrlPre:this.$store.getters.changeImgPre,
+        imgUrlPre:this.Host+'/',
         dialogTableVisible:false,
         itemNew:{},
         itemtitle:'',
@@ -272,11 +270,6 @@
     },
     mounted(){//一来dom 的存在就放在mounted ，配合this.$nextTick（）
 //        this.listOff=false;
-    },
-    computed:{
-      ...mapState({
-          'imgUrlPre':state => state.login.changeImgPreInfo
-      })
     },
     created(){
       const that = this;

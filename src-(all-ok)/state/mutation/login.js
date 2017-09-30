@@ -9,10 +9,5 @@ export const loginMutations = {
       state.userInfo = newUserInfo;
       sessionStorage['userInfo'] = JSON.stringify(newUserInfo);
     }
-  },
-  updateImgPreInfo(state, newImgPreInfo) {
-    // if(newImgPreInfo){
-      state.changeImgPreInfo = newImgPreInfo;
-    // }
-  },
+  }
 }

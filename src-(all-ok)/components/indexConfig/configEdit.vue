@@ -120,7 +120,6 @@
     </div>
 </template>
 <script>
-  import {mapState} from 'vuex';
   import configheader from '../common/configHeader.vue'
   import imgupload from '../common/imgUpload.vue'
   export default {
@@ -168,11 +167,6 @@
           CurrentEditPosIDObj:{}
         }
       },
-    computed:{
-      ...mapState({
-        'imgUrlPre':state => state.login.changeImgPreInfo
-      })
-    },
     created(){
       this.init(this.configEditItem);
     },
@@ -244,9 +238,7 @@
 //            console.log('ccccs');
 //          this.checkAll = true;
 //        }
-//        this.fileList = this.Host+'/'+this.EditQuery.btnIconDir+'?'+ +new Date();
-//        this.fileList = this.$store.getters.changeImgPre+this.EditQuery.btnIconDir+'?'+ +new Date();
-        this.fileList = this.imgUrlPre+this.EditQuery.btnIconDir+'?'+ +new Date();
+        this.fileList = this.Host+'/'+this.EditQuery.btnIconDir+'?'+ +new Date();
         this.posMsg = this.EditQuery.btnPosDes;
         this.Url = this.EditQuery.btnIconDir;
         this.picName = this.EditQuery.btnIconName;

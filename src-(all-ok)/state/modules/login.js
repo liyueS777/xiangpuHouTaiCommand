@@ -5,7 +5,6 @@ const login = {
   state:{
     userInfo: { //保存用户信息
     },
-    changeImgPreInfo:""
   },
   getters:loginGetters,
   mutations:loginMutations,
